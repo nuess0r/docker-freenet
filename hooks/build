@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# $IMAGE_NAME var is injected into the build so the tag is correct.
+if [[ $IMAGE_NAME != *:* ]]; then
+  build=$(wget -qO - https://api.github.com/repos/freenet/fred/releases/latest | grep 'tag_name'| cut -d'"' -f 4)
+  short_build=$(echo ${build}|cut -c7-)
+  ADDITIONAL_OPTIONS="$ADDITIONAL_OPTIONS -t $IMAGE_NAME:latest" 
+  IMAGE_NAME="$IMAGE_NAME:$short_build"
+else
+  short_build=${IMAGE_NAME#.*:}
+fi
+
+docker build --build-arg freenet_build=$build \
+             --label BUILD_VERSION=$build \
+             -t $IMAGE_NAME $ADDITIONAL_OPTIONS .
