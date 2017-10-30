@@ -1,19 +1,30 @@
 #!/bin/bash
 
 echo "------ HOOK START - BUILD -------"
-printenv
-
 # $IMAGE_NAME var is injected into the build so the tag is correct.
 if [[ $IMAGE_NAME != *:* ]] || [[ $IMAGE_NAME = *:latest ]] ; then
   IMAGE_NAME=${IMAGE_NAME#.*:}
-  export BUILD=$(wget -qO - https://api.github.com/repos/freenet/fred/releases/latest | grep 'tag_name'| cut -d'"' -f 4)
-  SHORT_BUILD=$(echo ${BUILD}|cut -c7-)
-  ADDITIONAL_OPTIONS="$ADDITIONAL_OPTIONS -t $IMAGE_NAME:latest"
+  if hash wget 2>/dev/null ; then
+    export BUILD=$(wget -qO - https://api.github.com/repos/freenet/fred/releases/latest | grep 'tag_name'| cut -d'"' -f 4)
+    export SHORT_BUILD=$(echo ${BUILD}|cut -c7-)
+    ADDITIONAL_OPTIONS="$ADDITIONAL_OPTIONS -t $IMAGE_NAME:latest"
+  elif hash curl 2>/dev/null ; then
+    export BUILD=$(curl -so- https://api.github.com/repos/freenet/fred/releases/latest | grep 'tag_name'| cut -d'"' -f 4)
+    export SHORT_BUILD=$(echo ${BUILD}|cut -c7-)
+    ADDITIONAL_OPTIONS="$ADDITIONAL_OPTIONS -t $IMAGE_NAME:latest"
+  else
+    echo "Neither wget nor curl found building latest"
+    export SHORT_BUILD=latest
+  fi
   IMAGE_NAME="$IMAGE_NAME:$SHORT_BUILD"
 else
   export SHORT_BUILD=${IMAGE_NAME#.*:}
   export BUILD=$(printf "build%05i" $SHORT_BUILD)
 fi
+
+echo "########################################################"
+printenv
+echo "########################################################"
 
 docker build --build-arg freenet_build=$BUILD \
              --label BUILD_VERSION=$BUILD \
