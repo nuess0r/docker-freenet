@@ -3,7 +3,7 @@
 echo "------ HOOK START - BUILD -------"
 # $IMAGE_NAME var is injected into the build so the tag is correct.
 if [[ $IMAGE_NAME != *:* ]] || [[ $IMAGE_NAME = *:latest ]] ; then
-  IMAGE_NAME=${IMAGE_NAME#.*:}
+  IMAGE_NAME=${IMAGE_NAME%:*}
   if hash wget 2>/dev/null ; then
     export BUILD=$(wget -qO - https://api.github.com/repos/freenet/fred/releases/latest | grep 'tag_name'| cut -d'"' -f 4)
     export SHORT_BUILD=$(echo ${BUILD}|cut -c7-)
@@ -18,7 +18,7 @@ if [[ $IMAGE_NAME != *:* ]] || [[ $IMAGE_NAME = *:latest ]] ; then
   fi
   IMAGE_NAME="$IMAGE_NAME:$SHORT_BUILD"
 else
-  export SHORT_BUILD=${IMAGE_NAME#.*:}
+  export SHORT_BUILD=$(basename ${IMAGE_NAME#*:})
   export BUILD=$(printf "build%05i" $SHORT_BUILD)
 fi
 
