@@ -4,17 +4,19 @@ echo "------ HOOK START - BUILD -------"
 printenv
 
 # $IMAGE_NAME var is injected into the build so the tag is correct.
-if [[ $IMAGE_NAME != *:* ]]; then
-  build=$(wget -qO - https://api.github.com/repos/freenet/fred/releases/latest | grep 'tag_name'| cut -d'"' -f 4)
-  short_build=$(echo ${build}|cut -c7-)
+if [[ $IMAGE_NAME != *:* ]] || [[ $IMAGE_NAME = *:latest ]] ; then
+  IMAGE_NAME=${IMAGE_NAME#.*:}
+  export BUILD=$(wget -qO - https://api.github.com/repos/freenet/fred/releases/latest | grep 'tag_name'| cut -d'"' -f 4)
+  SHORT_BUILD=$(echo ${BUILD}|cut -c7-)
   ADDITIONAL_OPTIONS="$ADDITIONAL_OPTIONS -t $IMAGE_NAME:latest"
-  IMAGE_NAME="$IMAGE_NAME:$short_build"
+  IMAGE_NAME="$IMAGE_NAME:$SHORT_BUILD"
 else
-  short_build=${IMAGE_NAME#.*:}
+  export SHORT_BUILD=${IMAGE_NAME#.*:}
+  export BUILD=$(printf "build%05i" $SHORT_BUILD)
 fi
 
-docker build --build-arg freenet_build=$build \
-             --label BUILD_VERSION=$build \
+docker build --build-arg freenet_build=$BUILD \
+             --label BUILD_VERSION=$BUILD \
              -t $IMAGE_NAME $ADDITIONAL_OPTIONS .
 
 echo "------ HOOK END - BUILD -------"
