@@ -22,10 +22,6 @@ else
   export BUILD=$(printf "build%05i" $SHORT_BUILD)
 fi
 
-echo "########################################################"
-printenv
-echo "########################################################"
-
 docker build --build-arg freenet_build=$BUILD \
              --label BUILD_VERSION=$BUILD \
              -t $IMAGE_NAME $ADDITIONAL_OPTIONS .
