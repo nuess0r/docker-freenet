@@ -1,5 +1,15 @@
 #!/bin/sh
 
+trapexit() {
+  echo -n "Trapped SIGTERM @" >>/data/logs/term.log
+  date >>/data/logs/term.log
+  /fred/run.sh stop >>/data/logs/term.log
+  echo "exited: $1" >>/data/logs/term.log
+  exit 0
+}
+
+trap 'trapexit' SIGTERM
+
 if [ ! -f /conf/freenet.ini ]; then
     cp /defaults/freenet.ini /conf/
     sed -i "s#ALLOWEDHOSTS#$allowedhosts#" /conf/freenet.ini
@@ -9,4 +19,5 @@ fi
 
 cd /fred
 
-./run.sh console
+./run.sh console &
+wait
