@@ -6,11 +6,10 @@ LABEL maintainer="Tobias Vollmer <info+docker@tvollmer.de"
 ARG freenet_build
 
 # Runtime argument
-ENV allowedhosts=127.0.0.1,0:0:0:0:0:0:0:1
+ENV allowedhosts=127.0.0.1,0:0:0:0:0:0:0:1 darknetport=12345 opennetport=12346
 
 # Interfaces:
-EXPOSE 8888
-EXPOSE 9481
+EXPOSE 8888 9481 ${darknetport}/udp ${opennetport}/udp
 VOLUME ["/conf", "/data"]
 
 # Command to run on start of the container
