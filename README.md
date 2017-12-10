@@ -13,7 +13,7 @@ Just pull the image by tag:
 
     docker pull 5nafu/freenet
 
-Then download the docker-compose.yml file found in the github repo, edit it
+Then download the docker-compose.yml file found in the [github repo](https://github.com/5nafu/docker-freenet), edit it
 to set the port and volume configuration the way you want it, then run it:
 
     docker-compose -f docker-compose.yml up -d
