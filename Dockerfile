@@ -1,6 +1,6 @@
 FROM java:openjdk-8-jre-alpine
 
-LABEL maintainer="Tobias Vollmer <info+docker@tvollmer.de"
+LABEL maintainer="Tobias Vollmer <info+docker@tvollmer.de>"
 
 # Build argument (e.g. "build01478")
 ARG freenet_build
