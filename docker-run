@@ -17,6 +17,10 @@ if [ ! -f /conf/freenet.ini ]; then
     sed -i "s#OPENNETPORT#$opennetport#" /conf/freenet.ini
 fi
 
+if [ ! -f /data/seednodes.fref  ]; then
+    cp /fred/seednodes.fref /data/
+fi
+
 cd /fred
 
 ./run.sh console &
