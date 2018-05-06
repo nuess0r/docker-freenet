@@ -1,4 +1,4 @@
-**Note:** work in progress, port access doesnt work yet
+**Note:** work in progress
 
 This is an **unofficial** docker image for Freenet.
 
