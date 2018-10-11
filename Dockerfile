@@ -33,7 +33,9 @@ COPY docker-run /fred/
 RUN build=$(test -n "${freenet_build}" && echo ${freenet_build} \
             || wget -qO - https://api.github.com/repos/freenet/fred/releases/latest | grep 'tag_name'| cut -d'"' -f 4) \
     && short_build=$(echo ${build}|cut -c7-) \
-    && echo -e "build: $build\nurl: https://github.com/freenet/fred/releases/download/$build/new_installer_offline_$short_build.jar" >buildinfo.json
+    && echo -e "build: $build\nurl: https://github.com/freenet/fred/releases/download/$build/new_installer_offline_$short_build.jar" >buildinfo.json \
+    && echo "Building:" \
+    && cat buildinfo.json
 
 # Download and install freenet in the given version
 RUN wget -O /tmp/new_installer.jar $(grep url /fred/buildinfo.json |cut -d" " -f2) \
