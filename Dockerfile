@@ -10,7 +10,6 @@ ENV allowedhosts=127.0.0.1,0:0:0:0:0:0:0:1 darknetport=12345 opennetport=12346
 
 # Interfaces:
 EXPOSE 8888 9481 ${darknetport}/udp ${opennetport}/udp
-VOLUME ["/conf", "/data"]
 
 # Command to run on start of the container
 CMD [ "/fred/docker-run" ]
@@ -22,9 +21,10 @@ HEALTHCHECK --interval=5m --timeout=3s CMD /fred/run.sh status || exit 1
 RUN apk add --update openssl libc6-compat && ln -s /lib /lib64
 
 # Do not run freenet as root user:
-RUN addgroup -S -g 1000 fred && adduser -S -u 1000 -G fred -h /fred fred && chown fred: /conf /data
+RUN mkdir -p /conf /data && addgroup -S -g 1000 fred && adduser -S -u 1000 -G fred -h /fred fred && chown fred: /conf /data
 USER fred
 WORKDIR /fred
+VOLUME ["/conf", "/data"]
 
 COPY ./defaults/freenet.ini /defaults/
 COPY docker-run /fred/
