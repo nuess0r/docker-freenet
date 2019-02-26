@@ -22,7 +22,7 @@ HEALTHCHECK --interval=5m --timeout=3s CMD /fred/run.sh status || exit 1
 RUN apk add --update openssl libc6-compat && ln -s /lib /lib64
 
 # Do not run freenet as root user:
-RUN addgroup -S -g 1000 fred && adduser -S -u 1000 -G fred -h /fred fred
+RUN addgroup -S -g 1000 fred && adduser -S -u 1000 -G fred -h /fred fred && chown fred: /conf /data
 USER fred
 WORKDIR /fred
 
